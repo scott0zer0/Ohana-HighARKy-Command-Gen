@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ohana HighARKy | GSA RCON Item Builder</title>
+<style>
+:root{
+  --bg:#06101c;
+  --panel:#0b1626;
+  --panel2:#0f1c2d;
+  --line:#1569ac;
+  --line2:#24374f;
+  --text:#eef7ff;
+  --muted:#9bb0c8;
+  --blue:#2e9cff;
+  --purple:#9147ff;
+  --green:#25c35a;
+  --red:#e23c4f;
+  --cyan:#20d6ff;
+  --shadow:0 14px 40px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 18% 5%,rgba(31,122,255,.11),transparent 24%),
+    radial-gradient(circle at 82% 0%,rgba(151,57,255,.10),transparent 22%),
+    linear-gradient(180deg,#040a12,#07111d 38%,#050b13);
+  color:var(--text);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  min-height:100vh;
+}
+.shell{max-width:1500px;margin:auto;padding:18px}
+.hero{
+  display:grid;grid-template-columns:1.6fr .9fr;gap:14px;
+  border:1px solid #143d68;border-radius:14px;padding:18px 22px;margin-bottom:14px;
+  background:linear-gradient(90deg,rgba(7,23,41,.98),rgba(13,15,36,.94));
+  box-shadow:var(--shadow)
+}
+.brand h1{margin:0;font-size:46px;letter-spacing:.5px}
+.brand .ohana{color:#2ca9ff}
+.brand .high{font-style:italic}
+.brand h2{margin:2px 0 0;font-size:24px;letter-spacing:1px}
+.tag{color:#b064ff;font-size:17px;font-style:italic;margin-top:8px}
+.hero-note{
+  align-self:stretch;border:1px solid #173f68;border-radius:12px;padding:16px;
+  background:rgba(9,20,36,.75);display:flex;flex-direction:column;justify-content:center
+}
+.hero-note b{font-size:16px}
+.hero-note .ark{color:#39a7ff;font-size:18px;margin:5px 0}
+.info{
+  border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:14px;
+  background:#0b1b2f;color:#dbeeff
+}
+.info code{color:var(--cyan);font-weight:800}
+.layout{display:grid;grid-template-columns:1.25fr 1fr;gap:14px}
+.card{
+  border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#0b1728,#08121f);
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px
+}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 16px;border-bottom:1px solid #173149;font-weight:900;letter-spacing:.3px
+}
+.card-body{padding:14px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+button{
+  border:0;border-radius:6px;padding:10px 14px;font-weight:850;cursor:pointer;color:#fff;
+  background:#1f73bd;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)
+}
+button:hover{filter:brightness(1.08)}
+button.purple{background:#6731a6}
+button.red{background:#b82e3a}
+button.green{background:#1e9f49}
+button.dark{background:#182230}
+button.small{padding:7px 9px;font-size:12px}
+button.icon{min-width:36px;padding:7px}
+.item{
+  border:1px solid #24374f;border-radius:10px;background:#0b1522;margin-bottom:10px;padding:12px
+}
+.item-grid{
+  display:grid;grid-template-columns:2.4fr .55fr .65fr .8fr auto;gap:10px;align-items:end
+}
+label{display:block;color:#c4d6e8;font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+input,select,textarea{
+  width:100%;border:1px solid #2b425d;border-radius:6px;background:#07101a;color:#fff;
+  padding:9px 10px;outline:none
+}
+input:focus,select:focus,textarea:focus{border-color:#2f9df5}
+.path{font-size:12px;color:#b9c7d8;margin-top:7px;word-break:break-all}
+.item-actions{display:flex;gap:5px}
+.output{
+  min-height:330px;background:#020506;border:1px solid #162437;color:#e7f4ff;
+  font-family:Consolas,Menlo,monospace;line-height:1.55;resize:vertical
+}
+.output .placeholder{color:#6e8298}
+.copy-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.preview{
+  background:#020506;border:1px solid #182536;border-radius:6px;padding:11px;
+  color:#e8f5ff;font-family:Consolas,monospace;word-break:break-all;min-height:62px
+}
+.options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.note-box{border-right:1px solid #21364d;padding-right:10px}
+.note-box:last-child{border-right:0}
+.note-title{font-weight:900;color:#3ea6ff;margin-bottom:8px}
+.note-title.p{color:#b35cff}
+ul{padding-left:18px;color:#c1cede;line-height:1.6;margin:0}
+.footer{text-align:center;color:#2d9fe8;letter-spacing:2px;padding:10px 0 20px}
+.status{margin-top:8px;font-size:12px;color:#61e38c}
+.error{color:#ff6a75}
+.catalog-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:10
+}
+.catalog{
+  width:min(820px,100%);max-height:80vh;overflow:auto;background:#0b1626;border:1px solid #2876bb;
+  border-radius:12px;padding:16px;box-shadow:0 24px 80px rgba(0,0,0,.6)
+}
+.catalog-row{
+  display:grid;grid-template-columns:1fr 2.5fr auto;gap:10px;align-items:center;
+  border-bottom:1px solid #1a3149;padding:9px 0
+}
+.catalog-row code{font-size:11px;color:#a8bfd8;word-break:break-all}
+@media(max-width:1000px){
+  .layout,.hero{grid-template-columns:1fr}
+  .item-grid{grid-template-columns:1fr 1fr}
+  .item-grid .bpcol{grid-column:1/-1}
+  .options,.notes{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="hero">
+    <div class="brand">
+      <h1><span class="ohana">OHANA</span> <span class="high">HIGHARKY</span></h1>
+      <h2>RCON ITEM COMMAND BUILDER</h2>
+      <div class="tag">Where Survivors Become Ohana. <span style="font-style:normal;color:#7fa2c4;font-size:12px">• v4.0</span></div>
+    </div>
+    <div class="hero-note">
+      <b>Shop Commands for</b>
+      <div class="ark">ARK: Survival Ascended</div>
+      <span>Generate clean RCON commands for GSA item delivery.</span>
+    </div>
+  </div>
+
+  <div class="info">ℹ This builder uses <code>{character.id}</code> automatically (provided by GSA). No player ID needed.</div>
+
+  <div class="layout">
+    <div>
+      <div class="card">
+        <div class="card-head">
+          <span>🛒 BUILD ITEMS</span>
+          <div class="toolbar">
+            <button onclick="addItem()">＋ ADD ITEM</button>
+            <button class="purple" onclick="duplicateSelected()">▣ DUPLICATE</button>
+            <button class="red" onclick="removeSelected()">✕ REMOVE</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="items"></div>
+          <div class="toolbar" style="margin-top:4px">
+            <button class="dark" onclick="openCatalog()">📖 SELECT FROM CATALOG</button>
+            <button class="dark" onclick="openAddCatalog()">＋ ADD PERSONAL ITEM</button>
+            <button class="dark" onclick="resetPersonalCatalog()">↺ RESET PERSONAL CATALOG</button>
+            <button class="dark" onclick="exportCatalog()">⇩ EXPORT CATALOG</button>
+            <button class="dark" onclick="document.getElementById('catalogImport').click()">⇧ IMPORT CATALOG</button>
+            <input id="catalogImport" type="file" accept=".json,application/json" style="display:none" onchange="importCatalog(event)">
+          </div>
+          <div class="hint" style="color:#8fa8c0;font-size:12px;margin-top:8px">
+            Master items ship with the site for everyone. Personal items are saved only in this browser.
+          </div>
+          <div id="status" class="status"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span>⚙ OPTIONS</span></div>
+        <div class="card-body options">
+          <div>
+            <label>Command Prefix</label>
+            <select id="prefix" onchange="generateAll();generatePreview()">
+              <option value="">Raw (RCON)</option>
+              <option value="cheat ">cheat</option>
+              <option value="admincheat ">admincheat</option>
+            </select>
+          </div>
+          <div>
+            <label>Quality Default</label>
+            <input id="defaultQuality" type="number" value="0" step="1">
+          </div>
+          <div>
+            <label>Force Blueprint Default</label>
+            <select id="defaultForce">
+              <option value="0">0 — Item</option>
+              <option value="1">1 — Blueprint</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body notes">
+          <div class="note-box">
+            <div class="note-title">🛡 IMPORTANT NOTES</div>
+            <ul>
+              <li><code>{character.id}</code> stays in the saved GSA command.</li>
+              <li>GSA replaces it with the buyer's character ID at delivery time.</li>
+              <li>Use full ARK item blueprint paths.</li>
+              <li>ForceBlueprint: 0 = item, 1 = blueprint.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="note-title p">😈 EXAMPLES</div>
+            <ul>
+              <li>Element: quantity 100, quality 0</li>
+              <li>Armor/weapons: quality can be adjusted</li>
+              <li>Blueprint purchase: set type to Blueprint</li>
+              <li>Multiple rows = multiple RCON commands</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-head"><span>🖥 GENERATED RCON COMMANDS</span></div>
+        <div class="card-body">
+          <textarea id="output" class="output" readonly></textarea>
+          <div class="copy-grid">
+            <button class="green" onclick="copyAll()">▣ COPY ALL COMMANDS</button>
+            <button onclick="copyEach()">☷ COPY AS SEPARATE LINES</button>
+            <button class="dark" onclick="clearAll()">🗑 CLEAR ALL</button>
+            <button class="dark" onclick="exportTxt()">⇩ EXPORT .TXT</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span>👁 SINGLE ITEM PREVIEW</span></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1.5fr .7fr .7fr .8fr;gap:8px">
+            <div><label>Item</label><select id="previewItem" onchange="generatePreview()"></select></div>
+            <div><label>Quantity</label><input id="previewQty" type="number" value="1" min="1" oninput="generatePreview()"></div>
+            <div><label>Quality</label><input id="previewQuality" type="number" value="0" oninput="generatePreview()"></div>
+            <div><label>Type</label><select id="previewForce" onchange="generatePreview()"><option value="0">Item</option><option value="1">Blueprint</option></select></div>
+          </div>
+          <div id="preview" class="preview" style="margin-top:10px"></div>
+          <div class="copy-grid">
+            <button onclick="generatePreview()">▣ GENERATE PREVIEW COMMAND</button>
+            <button class="dark" onclick="copyPreview()">▣ COPY PREVIEW</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span>📖 COMMAND FORMAT REFERENCE</span></div>
+        <div class="card-body">
+          <div class="preview">GiveItemToPlayer {character.id} "BlueprintPath" Quantity Quality ForceBlueprint</div>
+          <div style="font-size:13px;color:#c4d1df;line-height:1.65;margin-top:10px">
+            <b>{character.id}</b> = replaced by GSA with the player's character ID<br>
+            <b>Quantity</b> = amount of the item<br>
+            <b>Quality</b> = item quality value<br>
+            <b>ForceBlueprint</b> = 0 item / 1 blueprint
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">OHANA HIGHARKY COMMUNITY • WHERE SURVIVORS BECOME OHANA • GITHUB PAGES READY</div>
+</div>
+
+<div class="catalog-overlay" id="catalogOverlay" onclick="if(event.target===this)closeCatalog()">
+  <div class="catalog">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 style="margin:0">Item Catalog</h3>
+      <button class="red" onclick="closeCatalog()">Close</button>
+    </div>
+    <input id="catalogSearch" placeholder="Search items..." oninput="renderCatalog()">
+    <div id="catalogRows" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_CATALOG = [
+  {name:"Element", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Element.PrimalItemResource_Element'", qty:100, quality:0, force:0, category:"Resources"},
+  {name:"Element Shard", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_ElementShard.PrimalItemResource_ElementShard'", qty:100, quality:0, force:0, category:"Resources"},
+  {name:"Medical Brew", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Consumables/PrimalItemConsumable_HealSoup.PrimalItemConsumable_HealSoup'", qty:10, quality:0, force:0, category:"Consumables"},
+  {name:"Advanced Rifle Bullet", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedRifleBullet.PrimalItemAmmo_AdvancedRifleBullet'", qty:100, quality:0, force:0, category:"Ammo"},
+  {name:"Simple Rifle Ammo", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleRifleBullet.PrimalItemAmmo_SimpleRifleBullet'", qty:100, quality:0, force:0, category:"Ammo"},
+  {name:"Polymer", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Polymer.PrimalItemResource_Polymer'", qty:100, quality:0, force:0, category:"Resources"},
+  {name:"Organic Polymer", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Polymer_Organic.PrimalItemResource_Polymer_Organic'", qty:100, quality:0, force:0, category:"Resources"},
+  {name:"Metal Ingot", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_MetalIngot.PrimalItemResource_MetalIngot'", qty:100, quality:0, force:0, category:"Resources"},
+  {name:"Cementing Paste", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_ChitinPaste.PrimalItemResource_ChitinPaste'", qty:100, quality:0, force:0, category:"Resources"},
+  {name:"Black Pearl", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_BlackPearl.PrimalItemResource_BlackPearl'", qty:100, quality:0, force:0, category:"Resources"}
+];
+
+let PERSONAL_CATALOG = [];
+try {
+  const saved = JSON.parse(localStorage.getItem("ohanaHighARKyPersonalCatalog") || "[]");
+  PERSONAL_CATALOG = Array.isArray(saved) ? saved : [];
+} catch(e) {
+  PERSONAL_CATALOG = [];
+}
+let CATALOG = [];
+
+function rebuildCatalog(){
+  CATALOG = [
+    ...DEFAULT_CATALOG.map(x=>({...x, source:"Master"})),
+    ...PERSONAL_CATALOG.map(x=>({...x, source:"Personal"}))
+  ];
+}
+function saveCatalog(){
+  localStorage.setItem("ohanaHighARKyPersonalCatalog", JSON.stringify(PERSONAL_CATALOG));
+  rebuildCatalog();
+}
+function resetPersonalCatalog(){
+  if(!confirm("Remove all personal catalog items from this browser? Master items will remain.")) return;
+  PERSONAL_CATALOG = [];
+  saveCatalog();
+  renderCatalog();
+  const s=document.getElementById('status');s.className='status';s.textContent='Personal catalog reset. Master catalog kept.';
+}
+rebuildCatalog();
+
+
+let items = [];
+let selectedIndex = 0;
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+}
+
+function addItem(data){
+  const q = Number(document.getElementById('defaultQuality')?.value || 0);
+  const f = Number(document.getElementById('defaultForce')?.value || 0);
+  items.push(data || {name:"Custom Item", path:"", qty:1, quality:q, force:f});
+  selectedIndex = items.length-1;
+  renderItems(); generateAll(); refreshPreviewSelect();
+}
+
+function duplicateSelected(){
+  if(!items.length) return;
+  items.splice(selectedIndex+1,0,{...items[selectedIndex]});
+  selectedIndex++;
+  renderItems();generateAll();refreshPreviewSelect();
+}
+
+function removeSelected(){
+  if(!items.length) return;
+  items.splice(selectedIndex,1);
+  selectedIndex = Math.max(0,Math.min(selectedIndex,items.length-1));
+  renderItems();generateAll();refreshPreviewSelect();
+}
+
+function renderItems(){
+  const box=document.getElementById('items');
+  box.innerHTML='';
+  items.forEach((it,i)=>{
+    const div=document.createElement('div');
+    div.className='item';
+    div.style.outline = i===selectedIndex ? '1px solid #2f9df5' : 'none';
+    div.onclick=(e)=>{ if(!e.target.closest('button,input,select')){selectedIndex=i;renderItems()} };
+    div.innerHTML=`
+      <div class="item-grid">
+        <div class="bpcol">
+          <label>Item / Blueprint Path</label>
+          <input value="${escapeHtml(it.name)}" oninput="updateItem(${i},'name',this.value)" placeholder="Item name">
+          <input style="margin-top:7px" value="${escapeHtml(it.path)}" oninput="updateItem(${i},'path',this.value)" placeholder="Blueprint'/Game/...Item.Item'">
+          <div class="path">${escapeHtml(it.path || 'No blueprint path yet')}</div>
+        </div>
+        <div>
+          <label>Qty</label>
+          <input type="number" min="1" value="${it.qty}" oninput="updateItem(${i},'qty',this.value)">
+        </div>
+        <div>
+          <label>Quality</label>
+          <input type="number" value="${it.quality}" oninput="updateItem(${i},'quality',this.value)">
+        </div>
+        <div>
+          <label>Type</label>
+          <select onchange="updateItem(${i},'force',this.value)">
+            <option value="0" ${Number(it.force)===0?'selected':''}>Item</option>
+            <option value="1" ${Number(it.force)===1?'selected':''}>Blueprint</option>
+          </select>
+        </div>
+        <div class="item-actions">
+          <button class="icon" onclick="event.stopPropagation();selectedIndex=${i};duplicateSelected()">▣</button>
+          <button class="icon red" onclick="event.stopPropagation();selectedIndex=${i};removeSelected()">🗑</button>
+        </div>
+      </div>`;
+    box.appendChild(div);
+  });
+}
+
+function updateItem(i,key,val){
+  if(['qty','quality','force'].includes(key)) val = Number(val);
+  items[i][key]=val;
+  selectedIndex=i;
+  generateAll();refreshPreviewSelect(false);
+}
+
+function commandFor(it, qty=it.qty, quality=it.quality, force=it.force){
+  const prefix=document.getElementById('prefix').value;
+  if(!it.path.trim()) return '';
+  return `${prefix}GiveItemToPlayer {character.id} "${it.path.trim()}" ${qty} ${quality} ${force}`;
+}
+
+function generateAll(){
+  const out=items.map(commandFor).filter(Boolean).join('\n');
+  document.getElementById('output').value=out;
+  const missing=items.filter(x=>!x.path.trim()).length;
+  document.getElementById('status').textContent = missing ? `${missing} item row(s) still need a blueprint path.` : `${items.length} item command(s) ready.`;
+  document.getElementById('status').className = 'status'+(missing?' error':'');
+}
+
+function refreshPreviewSelect(reset=true){
+  const sel=document.getElementById('previewItem');
+  const prev=sel.value;
+  sel.innerHTML='';
+  items.forEach((it,i)=>{
+    const op=document.createElement('option');op.value=i;op.textContent=it.name||`Item ${i+1}`;sel.appendChild(op);
+  });
+  if(items.length){
+    sel.value = reset ? Math.min(selectedIndex,items.length-1) : (prev || 0);
+  }
+  generatePreview();
+}
+
+function generatePreview(){
+  const sel=document.getElementById('previewItem');
+  const i=Number(sel.value||0);
+  const it=items[i];
+  const p=document.getElementById('preview');
+  if(!it){p.textContent='Add an item first.';return}
+  const qty=Number(document.getElementById('previewQty').value||1);
+  const quality=Number(document.getElementById('previewQuality').value||0);
+  const force=Number(document.getElementById('previewForce').value||0);
+  p.textContent=commandFor(it,qty,quality,force)||'This item needs a blueprint path.';
+}
+
+async function copyText(t,msg){
+  if(!t) return;
+  await navigator.clipboard.writeText(t);
+  const s=document.getElementById('status');s.className='status';s.textContent=msg;
+}
+function copyAll(){copyText(document.getElementById('output').value,'Copied all commands.')}
+function copyEach(){copyText(document.getElementById('output').value,'Copied as separate command lines.')}
+function copyPreview(){copyText(document.getElementById('preview').textContent,'Copied preview command.')}
+
+function exportTxt(){
+  const text=document.getElementById('output').value;
+  if(!text) return;
+  const blob=new Blob([text],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='ohana-higharky-gsa-shop-item-commands.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function clearAll(){
+  items=[];selectedIndex=0;renderItems();generateAll();refreshPreviewSelect();
+}
+
+function openCatalog(){
+  document.getElementById('catalogOverlay').style.display='flex';
+  renderCatalog();
+}
+function closeCatalog(){document.getElementById('catalogOverlay').style.display='none'}
+function renderCatalog(){
+  const q=(document.getElementById('catalogSearch').value||'').toLowerCase();
+  const rows=document.getElementById('catalogRows');rows.innerHTML='';
+  const matches = CATALOG.map((x,i)=>({x,i})).filter(({x}) =>
+    (x.name||'').toLowerCase().includes(q) ||
+    (x.path||'').toLowerCase().includes(q) ||
+    (x.category||'').toLowerCase().includes(q)
+  );
+  matches.forEach(({x,i})=>{
+    const d=document.createElement('div');d.className='catalog-row';
+    d.style.gridTemplateColumns='1.1fr 2.2fr auto';
+    d.innerHTML=`
+      <div><b>${escapeHtml(x.name)}</b><div style="font-size:11px;color:#7fa2c4;margin-top:3px">${escapeHtml(x.category||'Custom')} • ${escapeHtml(x.source||'Master')} • Qty ${x.qty ?? 1} • Q ${x.quality ?? 0} • ${Number(x.force)===1?'Blueprint':'Item'}</div></div>
+      <code>${escapeHtml(x.path)}</code>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="small">Select</button>
+        <button class="small purple">Edit</button>
+        <button class="small red">Delete</button>
+      </div>`;
+    const buttons=d.querySelectorAll('button');
+    buttons[0].onclick=()=>{
+      items.push({name:x.name,path:x.path,qty:Number(x.qty ?? 1),quality:Number(x.quality ?? 0),force:Number(x.force ?? 0)});
+      selectedIndex=items.length-1;
+      closeCatalog();renderItems();generateAll();refreshPreviewSelect();
+    };
+    buttons[1].onclick=()=>{
+      if(x.source==="Master"){ alert("Master items are built into the site. Add a personal copy if you want different defaults."); return; }
+      editCatalogItem(i);
+    };
+    buttons[2].onclick=()=>{
+      if(x.source==="Master"){ alert("Master items are built into the site and cannot be deleted here."); return; }
+      const pi=i-DEFAULT_CATALOG.length;
+      if(confirm(`Delete "${x.name}" from your personal catalog?`)){
+        PERSONAL_CATALOG.splice(pi,1);saveCatalog();renderCatalog();
+      }
+    };
+    rows.appendChild(d);
+  });
+  if(!matches.length) rows.innerHTML='<div style="padding:18px;color:#8fa8c0">No catalog matches.</div>';
+}
+
+function openAddCatalog(){
+  const name=prompt("Catalog item name:");
+  if(!name) return;
+  const path=prompt("Full item blueprint path:");
+  if(!path) return;
+  const qty=Number(prompt("Default quantity:", "1") || 1);
+  const quality=Number(prompt("Default quality:", "0") || 0);
+  const force=Number(prompt("0 = item, 1 = blueprint:", "0") || 0) ? 1 : 0;
+  const category=prompt("Category (Resources, Ammo, Armor, Mod Items, etc.):", "Custom") || "Custom";
+  PERSONAL_CATALOG.push({name,path,qty,quality,force,category});
+  saveCatalog();
+  const s=document.getElementById('status');s.className='status';s.textContent=`Saved "${name}" to your catalog.`;
+}
+
+function editCatalogItem(i){
+  const pi=i-DEFAULT_CATALOG.length;
+  if(pi < 0) return;
+  const x=PERSONAL_CATALOG[pi];
+  const name=prompt("Catalog item name:",x.name); if(name===null||!name.trim()) return;
+  const path=prompt("Full item blueprint path:",x.path); if(path===null||!path.trim()) return;
+  const qty=Number(prompt("Default quantity:",String(x.qty ?? 1)) || 1);
+  const quality=Number(prompt("Default quality:",String(x.quality ?? 0)) || 0);
+  const force=Number(prompt("0 = item, 1 = blueprint:",String(x.force ?? 0)) || 0) ? 1 : 0;
+  const category=prompt("Category:",x.category||"Custom") || "Custom";
+  PERSONAL_CATALOG[pi]={name:name.trim(),path:path.trim(),qty,quality,force,category};
+  saveCatalog();renderCatalog();
+}
+
+function exportCatalog(){
+  const payload={version:4, master:DEFAULT_CATALOG, personal:PERSONAL_CATALOG};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='ohana-higharky-item-catalog.json';
+  a.click();URL.revokeObjectURL(a.href);
+}
+
+function importCatalog(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      const incoming=Array.isArray(data) ? data : (Array.isArray(data.personal) ? data.personal : []);
+      if(!incoming.length) throw new Error("No personal catalog array found.");
+      const cleaned=incoming.filter(x=>x && x.name && x.path).map(x=>({
+        name:String(x.name),path:String(x.path),qty:Number(x.qty ?? 1),
+        quality:Number(x.quality ?? 0),force:Number(x.force ?? 0)?1:0,
+        category:String(x.category || "Imported")
+      }));
+      if(!cleaned.length) throw new Error("No valid items found.");
+      if(confirm(`Import ${cleaned.length} personal items? OK = replace personal catalog, Cancel = merge.`)){
+        PERSONAL_CATALOG=cleaned;
+      }else{
+        const seen=new Set(PERSONAL_CATALOG.map(x=>x.path));
+        cleaned.forEach(x=>{if(!seen.has(x.path)){PERSONAL_CATALOG.push(x);seen.add(x.path)}});
+      }
+      saveCatalog();renderCatalog();
+      const s=document.getElementById('status');s.className='status';s.textContent='Catalog imported and saved.';
+    }catch(err){alert("Could not import catalog: "+err.message)}
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+addItem({name:"Element",path:(CATALOG.find(x=>x.name==="Element")||DEFAULT_CATALOG[0]).path,qty:100,quality:0,force:0});
+</script>
+</body>
+</html>

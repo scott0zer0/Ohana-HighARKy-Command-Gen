@@ -128,6 +128,23 @@ ul{padding-left:18px;color:#c1cede;line-height:1.6;margin:0}
   .item-grid .bpcol{grid-column:1/-1}
   .options,.notes{grid-template-columns:1fr}
 }
+
+.tabs{display:flex;gap:8px;margin:0 0 14px}
+.tabbtn{flex:1;background:#132033;border:1px solid #28527d;color:#b9d2ea;padding:12px 16px}
+.tabbtn.active{background:linear-gradient(90deg,#1674c6,#7138b7);color:#fff;border-color:#42a5ff}
+.tabpage{display:none}.tabpage.active{display:block}
+.warn{
+  border:1px solid #996f24;background:#2a2111;color:#ffd98a;border-radius:9px;
+  padding:11px 13px;margin-bottom:14px;font-size:13px;line-height:1.5
+}
+.dino-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px}
+.dino-grid.two{grid-template-columns:2fr 1fr}
+.dino-command{
+  min-height:110px;background:#020506;border:1px solid #182536;color:#e7f4ff;
+  font-family:Consolas,Menlo,monospace;line-height:1.5;resize:vertical
+}
+@media(max-width:800px){.dino-grid,.dino-grid.two{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -136,7 +153,7 @@ ul{padding-left:18px;color:#c1cede;line-height:1.6;margin:0}
     <div class="brand">
       <h1><span class="ohana">OHANA</span> <span class="high">HIGHARKY</span></h1>
       <h2>RCON ITEM COMMAND BUILDER</h2>
-      <div class="tag">Where Survivors Become Ohana. <span style="font-style:normal;color:#7fa2c4;font-size:12px">• v4.0</span></div>
+      <div class="tag">Where Survivors Become Ohana. <span style="font-style:normal;color:#7fa2c4;font-size:12px">• v7.0</span></div>
     </div>
     <div class="hero-note">
       <b>Shop Commands for</b>
@@ -147,6 +164,12 @@ ul{padding-left:18px;color:#c1cede;line-height:1.6;margin:0}
 
   <div class="info">ℹ This builder uses <code>{character.id}</code> automatically (provided by GSA). No player ID needed.</div>
 
+  <div class="tabs">
+    <button id="itemsTabBtn" class="tabbtn active" onclick="showTab('items')">🛒 ITEM GENERATOR</button>
+    <button id="dinosTabBtn" class="tabbtn" onclick="showTab('dinos')">🦖 DINO GENERATOR</button>
+  </div>
+
+  <div id="itemsPage" class="tabpage active">
   <div class="layout">
     <div>
       <div class="card">
@@ -270,6 +293,132 @@ ul{padding-left:18px;color:#c1cede;line-height:1.6;margin:0}
     </div>
   </div>
 
+
+  </div><!-- itemsPage -->
+
+  <div id="dinosPage" class="tabpage">
+    <div class="warn">
+      🦖 <b>GSA Dino Delivery:</b> this generator is built around
+      <code>admincheat scriptcommand SpawnDinoInBall</code> and automatically targets
+      <code>{character.id}</code>.
+    </div>
+
+    <div class="layout">
+      <div>
+        <div class="card">
+          <div class="card-head"><span>🦖 BUILD DINO-IN-BALL COMMAND</span></div>
+          <div class="card-body">
+            <div class="dino-grid two">
+              <div>
+                <label>Dino Name</label>
+                <input id="dinoName" value="Argentavis" oninput="generateDinoBall()">
+              </div>
+              <div>
+                <label>Level (-l)</label>
+                <input id="dinoLevel" type="number" value="500" min="1" oninput="generateDinoBall()">
+              </div>
+            </div>
+
+            <div style="margin-top:10px">
+              <label>Dino Blueprint Path (-t)</label>
+              <input id="dinoBlueprint" value="/Game/PrimalEarth/Dinos/Argentavis/Argent_Character_BP.Argent_Character_BP" oninput="generateDinoBall()" placeholder="/Game/.../Dino_Character_BP.Dino_Character_BP">
+              <div class="hint" style="color:#8fa8c0;font-size:12px;margin-top:5px">
+                Use the raw object path only — no <code>Blueprint'</code> wrapper and no trailing <code>_C</code>.
+              </div>
+            </div>
+
+            <div class="dino-grid" style="margin-top:12px">
+              <div>
+                <label>-i</label>
+                <input id="dinoI" type="number" value="1" oninput="generateDinoBall()">
+              </div>
+              <div>
+                <label>-a</label>
+                <input id="dinoA" type="number" value="1" oninput="generateDinoBall()">
+              </div>
+              <div>
+                <label>-b</label>
+                <input id="dinoB" type="number" value="1" oninput="generateDinoBall()">
+              </div>
+            </div>
+
+            <div style="margin-top:12px">
+              <label>Color Regions (-r)</label>
+              <div class="dino-grid" style="grid-template-columns:repeat(6,1fr)">
+                <input id="r0" type="number" value="96" oninput="generateDinoBall()" title="Region 0">
+                <input id="r1" type="number" value="30" oninput="generateDinoBall()" title="Region 1">
+                <input id="r2" type="number" value="82" oninput="generateDinoBall()" title="Region 2">
+                <input id="r3" type="number" value="90" oninput="generateDinoBall()" title="Region 3">
+                <input id="r4" type="number" value="53" oninput="generateDinoBall()" title="Region 4">
+                <input id="r5" type="number" value="80" oninput="generateDinoBall()" title="Region 5">
+              </div>
+              <div class="hint" style="color:#8fa8c0;font-size:12px;margin-top:5px">
+                Regions are written as a comma-separated <code>-r=R0,R1,R2,R3,R4,R5</code> list.
+              </div>
+            </div>
+
+            <div class="dino-grid two" style="margin-top:12px">
+              <div>
+                <label>Quantity</label>
+                <input id="dinoQty" type="number" value="1" min="1" max="100" oninput="generateDinoBall()">
+              </div>
+              <div>
+                <label>Command Prefix</label>
+                <select id="dinoPrefix" onchange="generateDinoBall()">
+                  <option value="admincheat ">admincheat</option>
+                  <option value="cheat ">cheat</option>
+                  <option value="">Raw</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="toolbar" style="margin-top:14px">
+              <button onclick="openDinoCatalog()">📖 SELECT DINO</button>
+              <button class="dark" onclick="savePersonalDino()">＋ SAVE PERSONAL DINO</button>
+              <button class="dark" onclick="randomizeDinoColors()">🎨 RANDOM COLORS</button>
+              <button class="dark" onclick="clearDinoColors()">⌫ CLEAR COLORS</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><span>📖 COMMAND FORMAT</span></div>
+          <div class="card-body">
+            <div class="preview">admincheat scriptcommand SpawnDinoInBall -p={character.id} -t=/Game/... -l=500 -i=1 -a=1 -b=1 -r=96,30,82,90,53,80</div>
+            <ul style="margin-top:12px">
+              <li><code>-p={character.id}</code> is fixed automatically for GSA delivery.</li>
+              <li><code>-t</code> is the creature's raw blueprint object path.</li>
+              <li><code>-l</code> is the requested level.</li>
+              <li><code>-i</code>, <code>-a</code>, and <code>-b</code> are left editable so your shop can match the script command exactly.</li>
+              <li><code>-r</code> is the six-region color list.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-head"><span>🖥 GENERATED GSA DINO COMMAND</span></div>
+          <div class="card-body">
+            <textarea id="dinoOutput" class="dino-command" readonly></textarea>
+            <div class="copy-grid">
+              <button class="green" onclick="copyDino()">▣ COPY COMMAND(S)</button>
+              <button class="dark" onclick="exportDinoTxt()">⇩ EXPORT .TXT</button>
+            </div>
+            <div id="dinoStatus" class="status"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><span>👁 LIVE PREVIEW</span></div>
+          <div class="card-body">
+            <div class="preview" id="dinoExample"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- dinosPage -->
+
   <div class="footer">OHANA HIGHARKY COMMUNITY • WHERE SURVIVORS BECOME OHANA • GITHUB PAGES READY</div>
 </div>
 
@@ -284,6 +433,18 @@ ul{padding-left:18px;color:#c1cede;line-height:1.6;margin:0}
   </div>
 </div>
 
+
+<div class="catalog-overlay" id="dinoCatalogOverlay" onclick="if(event.target===this)closeDinoCatalog()">
+  <div class="catalog">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 style="margin:0">Dino Catalog</h3>
+      <button class="red" onclick="closeDinoCatalog()">Close</button>
+    </div>
+    <input id="dinoCatalogSearch" placeholder="Search dinos..." oninput="renderDinoCatalog()">
+    <div id="dinoCatalogRows" style="margin-top:10px"></div>
+  </div>
+</div>
+
 <script>
 const DEFAULT_CATALOG = [
   {name:"Element", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Element.PrimalItemResource_Element'", qty:100, quality:0, force:0, category:"Resources"},
@@ -295,7 +456,9 @@ const DEFAULT_CATALOG = [
   {name:"Organic Polymer", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Polymer_Organic.PrimalItemResource_Polymer_Organic'", qty:100, quality:0, force:0, category:"Resources"},
   {name:"Metal Ingot", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_MetalIngot.PrimalItemResource_MetalIngot'", qty:100, quality:0, force:0, category:"Resources"},
   {name:"Cementing Paste", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_ChitinPaste.PrimalItemResource_ChitinPaste'", qty:100, quality:0, force:0, category:"Resources"},
-  {name:"Black Pearl", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_BlackPearl.PrimalItemResource_BlackPearl'", qty:100, quality:0, force:0, category:"Resources"}
+  {name:"Black Pearl", path:"Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_BlackPearl.PrimalItemResource_BlackPearl'", qty:100, quality:0, force:0, category:"Resources"},
+  {name:"Colorizerer Grenade", path:"Blueprint'/HypersSuperDuperDinoColorizerer/ColorNade/PrimalItem_ColorizererererGrenade.PrimalItem_ColorizererererGrenade'", qty:1, quality:0, force:0, category:"Hyper's Dino Colorizerer"},
+  {name:"Colorizerer Brush", path:"Blueprint'/HypersSuperDuperDinoColorizerer/Item/PrimalItem_WeaponPaintbrush_DinoPainterColorizerererer.PrimalItem_WeaponPaintbrush_DinoPainterColorizerererer'", qty:1, quality:0, force:0, category:"Hyper's Dino Colorizerer"}
 ];
 
 let PERSONAL_CATALOG = [];
@@ -577,7 +740,149 @@ function importCatalog(event){
   reader.readAsText(file);
 }
 
+
+const MASTER_DINOS = [
+  {name:"Rex", mod:"Vanilla", cls:"Rex_Character_BP_C", path:"Blueprint'/Game/PrimalEarth/Dinos/Rex/Rex_Character_BP.Rex_Character_BP'"},
+  {name:"Therizinosaur", mod:"Vanilla", cls:"Therizino_Character_BP_C", path:"Blueprint'/Game/PrimalEarth/Dinos/Therizinosaurus/Therizino_Character_BP.Therizino_Character_BP'"},
+
+  {name:"S-Allosaurus", mod:"S-Dino Variants", cls:"S_Allo_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Allosaurus/S_Allo_Character_BP.S_Allo_Character_BP'"},
+  {name:"S-Ankylo", mod:"S-Dino Variants", cls:"S_Ankylo_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Ankylo/S_Ankylo_Character_BP.S_Ankylo_Character_BP'"},
+  {name:"S-Doedicurus", mod:"S-Dino Variants", cls:"S-Doed_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Doedicurus/S-Doed_Character_BP.S-Doed_Character_BP'"},
+  {name:"S-Deinonychus", mod:"S-Dino Variants", cls:"S-Deinonychus_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Deinonychus/S-Deinonychus_Character_BP.S-Deinonychus_Character_BP'"},
+  {name:"S-Fenrir", mod:"S-Dino Variants", cls:"S-Fenrir_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Fenrir/S-Fenrir_Character_BP.S-Fenrir_Character_BP'"},
+  {name:"S-Maewing", mod:"S-Dino Variants", cls:"S_MilkGlider_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Maewing/S_MilkGlider_Character_BP.S_MilkGlider_Character_BP'"},
+  {name:"S-Magmasaur", mod:"S-Dino Variants", cls:"S_Cherufe_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Cherufe/S_Cherufe_Character_BP.S_Cherufe_Character_BP'"},
+  {name:"S-Plesiosaur", mod:"S-Dino Variants", cls:"S_Plesiosaur_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Plesiosaur/S_Plesiosaur_Character_BP.S_Plesiosaur_Character_BP'"},
+  {name:"S-Ravager", mod:"S-Dino Variants", cls:"S-CaveWolf_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Ravager/S-CaveWolf_Character_BP.S-CaveWolf_Character_BP'"},
+  {name:"S-Reaper Male", mod:"S-Dino Variants", cls:"S-Xenomorph_Character_BP_Male_Tamed_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Reaper/S-Xenomorph_Character_BP_Male_Tamed.S-Xenomorph_Character_BP_Male_Tamed'"},
+  {name:"S-Reaper Female", mod:"S-Dino Variants", cls:"S-Xenomorph_Character_BP_Female_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Reaper/S-Xenomorph_Character_BP_Female.S-Xenomorph_Character_BP_Female'"},
+  {name:"S-Rex", mod:"S-Dino Variants", cls:"S_Rex_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Rex/S_Rex_Character_BP.S_Rex_Character_BP'"},
+  {name:"S-Rockdrake", mod:"S-Dino Variants", cls:"S-RockDrake_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/RockDrake/S-RockDrake_Character_BP.S-RockDrake_Character_BP'"},
+  {name:"S-Shadowmane", mod:"S-Dino Variants", cls:"S-LionfishLion_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Shadowmane/S-LionfishLion_Character_BP.S-LionfishLion_Character_BP'"},
+  {name:"S-Thylacoleo", mod:"S-Dino Variants", cls:"S-Thylacoleo_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Thylacoleo/S-Thylacoleo_Character_BP.S-Thylacoleo_Character_BP'"},
+  {name:"S-Trike", mod:"S-Dino Variants", cls:"S_Trike_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Trike/S_Trike_Character_BP.S_Trike_Character_BP'"},
+  {name:"S-Velonasaur", mod:"S-Dino Variants", cls:"S-Spindles_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Velonasaur/S-Spindles_Character_BP.S-Spindles_Character_BP'"},
+  {name:"S-Unicorn", mod:"S-Dino Variants", cls:"S-Unicorn_Character_BP_C", path:"Blueprint'/Game/Mods/SDinoVariants/Variants/Unicorn/S-Unicorn_Character_BP.S-Unicorn_Character_BP'"},
+
+  {name:"Runic Venom Wyvern", mod:"Runic Wyverns", cls:"Runic_Wyvern_Character_BP_Venom-V2_C", path:""},
+  {name:"Runic Flame Wyvern", mod:"Runic Wyverns", cls:"Runic_Wyvern_Character_BP_Flame-V2_C", path:""},
+  {name:"Runic Spark Wyvern", mod:"Runic Wyverns", cls:"Runic_Wyvern_Character_BP_Spark-V2_C", path:""},
+  {name:"Runic Glacial Wyvern", mod:"Runic Wyverns", cls:"Runic_Wyvern_Character_BP_Glacial-V2_C", path:""},
+  {name:"Runic Ghost Wyvern", mod:"Runic Wyverns", cls:"RW_character_BP_Ghost_C", path:""},
+  {name:"Runic Quartz Wyvern", mod:"Runic Wyverns", cls:"RW_Character_BP_Quartz_C", path:""},
+  {name:"Runic Sapphire Wyvern", mod:"Runic Wyverns", cls:"RW_Character_BP_Sapphire_C", path:""},
+  {name:"Runic Emerald Wyvern", mod:"Runic Wyverns", cls:"RW_Character_BP_Emerald_C", path:""},
+  {name:"Runic Ruby Wyvern", mod:"Runic Wyverns", cls:"RW_Character_BP_Ruby_C", path:""},
+  {name:"Runic Halo Wyvern", mod:"Runic Wyverns", cls:"RW_Charater_BP_HaloWyvern_C", path:""},
+  {name:"Runic Void Wyvern", mod:"Runic Wyverns", cls:"RW_Chara_BP_VoidWyv_C", path:""},
+  {name:"Runic Crystal Queen", mod:"Runic Wyverns", cls:"RW_Chara_BP_CrystalQueen_C", path:""},
+
+  {name:"Owl Griffin", mod:"MarniiMods Griffins", cls:"OwlGriffin_mm_Character_BP_C", path:""},
+  {name:"Royal Owl Griffin", mod:"MarniiMods Griffins", cls:"RoyalOwlGriffin_mm_Character_BP_C", path:""},
+
+  {name:"Zaldrir Dragon T1", mod:"Dragon's Kingdom", cls:"K_ZaldrirDragon_Character_BP_T1_C", path:"Blueprint'/DragonKingdom/Dragons/ZD1/K_ZaldrirDragon_Character_BP_T1.K_ZaldrirDragon_Character_BP_T1'"},
+  {name:"Zaldrir Dragon T2", mod:"Dragon's Kingdom", cls:"K_ZaldrirDragon_Character_BP_T2_C", path:"Blueprint'/DragonKingdom/Dragons/ZD1/K_ZaldrirDragon_Character_BP_T2.K_ZaldrirDragon_Character_BP_T2'"},
+  {name:"Zaldrir Dragon T3", mod:"Dragon's Kingdom", cls:"K_ZaldrirDragon_Character_BP_T3_C", path:"Blueprint'/DragonKingdom/Dragons/ZD1/K_ZaldrirDragon_Character_BP_T3.K_ZaldrirDragon_Character_BP_T3'"},
+  {name:"Zaldrir Dragon T4", mod:"Dragon's Kingdom", cls:"K_ZaldrirDragon_Character_BP_T4_C", path:"Blueprint'/DragonKingdom/Dragons/ZD1/K_ZaldrirDragon_Character_BP_T4.K_ZaldrirDragon_Character_BP_T4'"},
+  {name:"Zaldrir Dragon T5", mod:"Dragon's Kingdom", cls:"K_ZaldrirDragon_Character_BP_T5_C", path:"Blueprint'/DragonKingdom/Dragons/ZD1/K_ZaldrirDragon_Character_BP_T5.K_ZaldrirDragon_Character_BP_T5'"},
+  {name:"Zaldrir Dragon Alpha", mod:"Dragon's Kingdom", cls:"K_ZaldrirDragon_Character_BP_Alpha_C", path:""}
+];
+
+let PERSONAL_DINOS=[];
+try{
+  const s=JSON.parse(localStorage.getItem("ohanaHighARKyPersonalDinos")||"[]");
+  PERSONAL_DINOS=Array.isArray(s)?s:[];
+}catch(e){PERSONAL_DINOS=[]}
+
+
+function showTab(which){
+  const itemsTab=which==="items";
+  document.getElementById("itemsPage").classList.toggle("active",itemsTab);
+  document.getElementById("dinosPage").classList.toggle("active",!itemsTab);
+  document.getElementById("itemsTabBtn").classList.toggle("active",itemsTab);
+  document.getElementById("dinosTabBtn").classList.toggle("active",!itemsTab);
+  if(!itemsTab) generateDinoBall();
+}
+
+function normalizeBallPath(v){
+  v=(v||"").trim();
+  if(v.startsWith("Blueprint'") && v.endsWith("'")) v=v.slice(10,-1);
+  if(v.endsWith("_C")) v=v.slice(0,-2);
+  return v;
+}
+
+function generateDinoBall(){
+  const prefix=document.getElementById("dinoPrefix")?.value ?? "admincheat ";
+  if(!document.getElementById("dinoBlueprint")) return;
+  const bp=normalizeBallPath(document.getElementById("dinoBlueprint").value);
+  const level=Math.max(1,Number(document.getElementById("dinoLevel").value||1));
+  const iVal=document.getElementById("dinoI").value||"1";
+  const aVal=document.getElementById("dinoA").value||"1";
+  const bVal=document.getElementById("dinoB").value||"1";
+  const qty=Math.max(1,Number(document.getElementById("dinoQty").value||1));
+  const colors=[0,1,2,3,4,5].map(n=>document.getElementById("r"+n).value||"0").join(",");
+  const cmd=`${prefix}scriptcommand SpawnDinoInBall -p={character.id} -t=${bp} -l=${level} -i=${iVal} -a=${aVal} -b=${bVal} -r=${colors}`;
+  document.getElementById("dinoOutput").value=Array(qty).fill(cmd).join("\n");
+  document.getElementById("dinoExample").textContent=cmd;
+  const s=document.getElementById("dinoStatus");
+  s.className="status"+(!bp?" error":"");
+  s.textContent=bp?`${qty} SpawnDinoInBall command${qty===1?"":"s"} ready.`:"Enter a dino blueprint path.";
+}
+
+async function copyDino(){
+  const t=document.getElementById("dinoOutput").value;
+  if(!t)return;
+  await navigator.clipboard.writeText(t);
+  document.getElementById("dinoStatus").textContent="Copied dino command(s).";
+}
+function exportDinoTxt(){
+  const text=document.getElementById("dinoOutput").value;if(!text)return;
+  const blob=new Blob([text],{type:"text/plain"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="ohana-higharky-gsa-dino-ball-commands.txt";a.click();URL.revokeObjectURL(a.href);
+}
+function randomizeDinoColors(){
+  for(let n=0;n<6;n++) document.getElementById("r"+n).value=Math.floor(Math.random()*101);
+  generateDinoBall();
+}
+function clearDinoColors(){
+  for(let n=0;n<6;n++) document.getElementById("r"+n).value=0;
+  generateDinoBall();
+}
+
+function openDinoCatalog(){document.getElementById("dinoCatalogOverlay").style.display="flex";renderDinoCatalog()}
+function closeDinoCatalog(){document.getElementById("dinoCatalogOverlay").style.display="none"}
+function renderDinoCatalog(){
+  const q=(document.getElementById("dinoCatalogSearch").value||"").toLowerCase();
+  const rows=document.getElementById("dinoCatalogRows");rows.innerHTML="";
+  const all=[
+    ...MASTER_DINOS.map(x=>({...x,source:"Master"})),
+    ...PERSONAL_DINOS.map(x=>({...x,source:"Personal"}))
+  ].filter(x=>x.name.toLowerCase().includes(q)||(x.mod||"").toLowerCase().includes(q)||x.cls.toLowerCase().includes(q)||(x.path||"").toLowerCase().includes(q));
+  all.forEach(x=>{
+    const d=document.createElement("div");d.className="catalog-row";
+    d.innerHTML=`<div><b>${escapeHtml(x.name)}</b><div style="font-size:11px;color:#7fa2c4">${escapeHtml(x.mod||"Custom")} • ${x.source}</div></div><code>${escapeHtml(x.path||x.cls)}</code><button>Select</button>`;
+    d.querySelector("button").onclick=()=>{
+      if(!x.path){alert("This catalog entry does not yet have a verified raw blueprint object path for SpawnDinoInBall.");return}
+      document.getElementById("dinoName").value=x.name;
+      document.getElementById("dinoBlueprint").value=normalizeBallPath(x.path);
+      closeDinoCatalog();generateDinoBall();
+    };
+    rows.appendChild(d);
+  });
+}
+function savePersonalDino(){
+  const name=(document.getElementById("dinoName").value||"").trim();
+  const path=normalizeBallPath(document.getElementById("dinoBlueprint").value);
+  if(!name||!path){alert("Enter a dino name and blueprint path first.");return}
+  let cls=path.split("/").pop().split(".")[0] + "_C";
+  const mod=prompt("Mod / category name:","Personal")||"Personal";
+  PERSONAL_DINOS.push({name,mod,cls,path});
+  localStorage.setItem("ohanaHighARKyPersonalDinos",JSON.stringify(PERSONAL_DINOS));
+  document.getElementById("dinoStatus").textContent=`Saved "${name}" to your personal dino catalog.`;
+}
 addItem({name:"Element",path:(CATALOG.find(x=>x.name==="Element")||DEFAULT_CATALOG[0]).path,qty:100,quality:0,force:0});
+generateDinoBall();
 </script>
 </body>
 </html>
